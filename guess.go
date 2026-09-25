@@ -13,9 +13,16 @@ type entry struct {
 	//rank   int // sorted by count, 0 being most 25 being least
 }
 
+// counts each letter once per word, so counts are the number of words that
+// contain the letter. anything other than a-z is ignored.
 func countWord(counts []entry, word string) {
+	var seen [26]bool
 	for _, b := range word {
 		i := b - 'a'
+		if i < 0 || i >= 26 || seen[i] {
+			continue
+		}
+		seen[i] = true
 		counts[i].count = counts[i].count + 1
 	}
 }

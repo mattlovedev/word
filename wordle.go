@@ -4,7 +4,6 @@ import (
 	"bufio"
 	_ "embed"
 	"fmt"
-	"os"
 	"sort"
 	"strings"
 )
@@ -13,7 +12,7 @@ import (
 var wordleList string
 
 func main() {
-	rules := buildRules(buildArgs(os.Args[1:]))
+	rules := rulesFromCommandLine()
 	r := bufio.NewReader(strings.NewReader(wordleList))
 
 	words := make([]string, 0)

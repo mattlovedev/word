@@ -114,20 +114,47 @@ func buildRules(args []arg) rules {
 	return rules
 }
 
-func buildArgs(a []string) []arg {
+const usage = "usage: word [guess result]...\n" +
+	"  guess is a 5 letter word, result is 5 digits: 0 gray, 1 yellow, 2 green\n" +
+	"  e.g. word crane 01020 lions 00211"
+
+func buildArgs(a []string) ([]arg, error) {
+	if len(a)%2 != 0 {
+		return nil, fmt.Errorf("guess %q has no result", a[len(a)-1])
+	}
+
 	n := len(a) / 2
 
 	args := make([]arg, n)
 
 	for i := 0; i < n; i++ {
-		args[i].letters = a[2*i]
-		args[i].numbers = a[2*i+1]
+		letters := strings.ToLower(a[2*i])
+		numbers := a[2*i+1]
+		if len(letters) != 5 || strings.Trim(letters, "abcdefghijklmnopqrstuvwxyz") != "" {
+			return nil, fmt.Errorf("guess %q must be 5 letters", a[2*i])
+		}
+		if len(numbers) != 5 || strings.Trim(numbers, "012") != "" {
+			return nil, fmt.Errorf("result %q for guess %q must be 5 digits of 0, 1 or 2", numbers, a[2*i])
+		}
+		args[i].letters = letters
+		args[i].numbers = numbers
 	}
-	return args
+	return args, nil
+}
+
+// builds rules from the command line, exiting with usage on bad input
+func rulesFromCommandLine() rules {
+	args, err := buildArgs(os.Args[1:])
+	if err != nil {
+		fmt.Fprintln(os.Stderr, "error:", err)
+		fmt.Fprintln(os.Stderr, usage)
+		os.Exit(2)
+	}
+	return buildRules(args)
 }
 
 func word() {
-	rules := buildRules(buildArgs(os.Args[1:]))
+	rules := rulesFromCommandLine()
 	r := bufio.NewReader(os.Stdin)
 	line, _, err := r.ReadLine()
 	for err == nil {

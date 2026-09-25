@@ -1,8 +1,32 @@
-<html>
-    <head>
-        <title>Word</title>
-        <link rel="icon" type="image/png" href="favicon.png">
-    </head>
-    <body>
-    </body>
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="utf-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+    <title>Word</title>
+    <link rel="icon" type="image/png" href="favicon.png">
+    <link rel="stylesheet" type="text/css" href="web/css/word.css">
+    <script src="web/js/wordle.js"></script>
+    <script src="web/js/word.js"></script>
+</head>
+<body>
+    <div id="content">
+        <h1>Word</h1>
+        <p class="help">Enter your Wordle guess, then tap its tiles to match the colors you got.</p>
+
+        <form id="guessForm" autocomplete="off">
+            <input id="guessInput" maxlength="5" autocapitalize="off" autocorrect="off" spellcheck="false" aria-label="Guess" placeholder="guess">
+            <button type="submit">Add</button>
+        </form>
+        <div id="error" role="alert"></div>
+
+        <div id="board"></div>
+        <button id="reset" type="button" hidden>Start over</button>
+
+        <p id="remaining"></p>
+        <div id="suggestions"></div>
+    </div>
+
+    <script src="web/js/page.js"></script>
+</body>
 </html>

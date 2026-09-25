@@ -2,15 +2,19 @@ package main
 
 import (
 	"bufio"
+	_ "embed"
 	"fmt"
 	"os"
 	"sort"
+	"strings"
 )
+
+//go:embed wordle.txt
+var wordleList string
 
 func main() {
 	rules := buildRules(buildArgs(os.Args[1:]))
-	f, _ := os.Open("/Users/matt.love/dev/word/wordle.txt")
-	r := bufio.NewReader(f)
+	r := bufio.NewReader(strings.NewReader(wordleList))
 
 	words := make([]string, 0)
 	counts := make([]entry, 26)

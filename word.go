@@ -49,12 +49,12 @@ func (c letterCount) passes(word string) bool {
 
 // 2 green match
 type green struct {
-	letter  byte
-	poition int
+	letter   byte
+	position int
 }
 
 func (g green) passes(word string) bool {
-	return word[g.poition] == g.letter
+	return word[g.position] == g.letter
 }
 
 type rule interface {
@@ -155,12 +155,10 @@ func rulesFromCommandLine() rules {
 
 func word() {
 	rules := rulesFromCommandLine()
-	r := bufio.NewReader(os.Stdin)
-	line, _, err := r.ReadLine()
-	for err == nil {
-		if rules.passes(string(line)) {
-			fmt.Println(string(line))
+	s := bufio.NewScanner(os.Stdin)
+	for s.Scan() {
+		if rules.passes(s.Text()) {
+			fmt.Println(s.Text())
 		}
-		line, _, err = r.ReadLine()
 	}
 }

@@ -58,12 +58,10 @@ func guess() {
 		counts[i].letter = 'a' + rune(i)
 	}
 
-	r := bufio.NewReader(os.Stdin)
-	line, _, err := r.ReadLine()
-	for err == nil {
-		words = append(words, string(line))
-		countWord(counts, string(line))
-		line, _, err = r.ReadLine()
+	s := bufio.NewScanner(os.Stdin)
+	for s.Scan() {
+		words = append(words, s.Text())
+		countWord(counts, s.Text())
 	}
 
 	sort.Slice(counts, func(i int, j int) bool {

@@ -13,7 +13,7 @@ var wordleList string
 
 func main() {
 	rules := rulesFromCommandLine()
-	r := bufio.NewReader(strings.NewReader(wordleList))
+	s := bufio.NewScanner(strings.NewReader(wordleList))
 
 	words := make([]string, 0)
 	counts := make([]entry, 26)
@@ -21,13 +21,11 @@ func main() {
 		counts[i].letter = 'a' + rune(i)
 	}
 
-	line, _, err := r.ReadLine()
-	for err == nil {
-		if rules.passes(string(line)) {
-			words = append(words, string(line))
-			countWord(counts, string(line))
+	for s.Scan() {
+		if rules.passes(s.Text()) {
+			words = append(words, s.Text())
+			countWord(counts, s.Text())
 		}
-		line, _, err = r.ReadLine()
 	}
 
 	sort.Slice(counts, func(i int, j int) bool {

@@ -7,12 +7,10 @@ import (
 )
 
 func filter_five() {
-	r := bufio.NewReader(os.Stdin)
-	line, _, err := r.ReadLine()
-	for err == nil {
-		if len(string(line)) == 5 {
-			fmt.Println(string(line))
+	s := bufio.NewScanner(os.Stdin)
+	for s.Scan() {
+		if len(s.Text()) == 5 {
+			fmt.Println(s.Text())
 		}
-		line, _, err = r.ReadLine()
 	}
 }

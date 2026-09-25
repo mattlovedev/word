@@ -4,6 +4,7 @@ import (
 	"bufio"
 	"fmt"
 	"os"
+	"strings"
 )
 
 const (
@@ -19,36 +20,31 @@ const (
 //grape 00101
 //grape 00101 navel 11010
 
-// 0 no match
-type excludes struct {
-	letter byte
-}
-
-func (e excludes) passes(word string) bool {
-	for i := range word {
-		if word[i] == e.letter {
-			return false
-		}
-	}
-	return true
-}
-
-// 1 yellow match
-type yellow struct {
+// letter is not at position; from a yellow or gray match
+type notAt struct {
 	letter   byte
 	position int
 }
 
-func (y yellow) passes(word string) bool {
-	if word[y.position] == y.letter {
-		return false
+func (n notAt) passes(word string) bool {
+	return word[n.position] != n.letter
+}
+
+// how many times letter appears in the word, based on the yellow and green
+// matches for it in a single guess. if the guess also had a gray match for
+// the letter, the word has exactly that many, otherwise at least that many.
+type letterCount struct {
+	letter byte
+	count  int
+	exact  bool
+}
+
+func (c letterCount) passes(word string) bool {
+	n := strings.Count(word, string(c.letter))
+	if c.exact {
+		return n == c.count
 	}
-	for i := range word {
-		if word[i] == y.letter {
-			return true
-		}
-	}
-	return false
+	return n >= c.count
 }
 
 // 2 green match
@@ -83,14 +79,28 @@ type arg struct {
 
 func (a arg) toRules() []rule {
 	r := make([]rule, 5)
+	counts := make(map[byte]int)
+	grays := make(map[byte]bool)
 	for i := range a.letters {
+		letter := a.letters[i]
 		switch int(a.numbers[i]) - '0' {
 		case NO_MATCH:
-			r[i] = excludes{a.letters[i]}
+			r[i] = notAt{letter, i}
+			grays[letter] = true
 		case YELLOW_MATCH:
-			r[i] = yellow{a.letters[i], i}
+			r[i] = notAt{letter, i}
+			counts[letter]++
 		case GREEN_MATCH:
-			r[i] = green{a.letters[i], i}
+			r[i] = green{letter, i}
+			counts[letter]++
+		}
+	}
+	for letter, count := range counts {
+		r = append(r, letterCount{letter, count, grays[letter]})
+	}
+	for letter := range grays {
+		if counts[letter] == 0 {
+			r = append(r, letterCount{letter, 0, true})
 		}
 	}
 	return r
@@ -115,8 +125,6 @@ func buildArgs(a []string) []arg {
 	}
 	return args
 }
-
-// TODO there is a bug where same letter has an exclude and not exclude, need to ignore the exclude or turn it yellow
 
 func word() {
 	rules := buildRules(buildArgs(os.Args[1:]))

@@ -1,7 +1,6 @@
 package main
 
 import (
-	"bufio"
 	"fmt"
 	"os"
 	"strings"
@@ -151,14 +150,4 @@ func rulesFromCommandLine() rules {
 		os.Exit(2)
 	}
 	return buildRules(args)
-}
-
-func word() {
-	rules := rulesFromCommandLine()
-	s := bufio.NewScanner(os.Stdin)
-	for s.Scan() {
-		if rules.passes(s.Text()) {
-			fmt.Println(s.Text())
-		}
-	}
 }

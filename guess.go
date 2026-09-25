@@ -1,12 +1,5 @@
 package main
 
-import (
-	"bufio"
-	"fmt"
-	"os"
-	"sort"
-)
-
 type entry struct {
 	letter rune
 	count  int
@@ -49,31 +42,4 @@ func cmpWords(counts []entry, first string, second string) bool {
 	}
 	// same letters (e.g. anagrams like least and slate), fall back to alphabetical
 	return first < second
-}
-
-func guess() {
-	words := make([]string, 0)
-	counts := make([]entry, 26)
-	for i := range counts {
-		counts[i].letter = 'a' + rune(i)
-	}
-
-	s := bufio.NewScanner(os.Stdin)
-	for s.Scan() {
-		words = append(words, s.Text())
-		countWord(counts, s.Text())
-	}
-
-	sort.Slice(counts, func(i int, j int) bool {
-		return counts[i].count > counts[j].count
-	})
-
-	sort.Slice(words, func(i int, j int) bool {
-		return cmpWords(counts, words[i], words[j])
-	})
-
-	for _, word := range words {
-		fmt.Println(word)
-	}
-
 }

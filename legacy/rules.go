@@ -115,7 +115,7 @@ func buildRules(args []arg) rules {
 
 const usage = "usage: word [guess result]...\n" +
 	"  guess is a 5 letter word, result is 5 digits: 0 gray, 1 yellow, 2 green\n" +
-	"  e.g. word crane 01020 lions 00211"
+	"  e.g. word crane 01020 lions 01120"
 
 func buildArgs(a []string) ([]arg, error) {
 	if len(a)%2 != 0 {

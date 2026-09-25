@@ -1,5 +1,6 @@
-// Page for word.js. Guesses are added from the form, tiles are tapped to cycle through
-// gray, yellow and green, and the suggestions update on every change. The guesses are
+// Page for word.js. Guesses are added from the form, starting with any letters already
+// known to be green, tiles are tapped to cycle through gray, yellow and green, and the
+// suggestions update on every change. The guesses are
 // mirrored in the URL hash (e.g. #crane01020lions00211) so a game can be reloaded or shared.
 
 const SHOWN = 10 // same as the Go program's output
@@ -14,6 +15,20 @@ const remaining = document.getElementById("remaining")
 const suggestions = document.getElementById("suggestions")
 const reset = document.getElementById("reset")
 
+// a letter that was green in an earlier guess is green again at the same position,
+// so a new guess starts with those tiles green and the rest gray
+function startingNumbers(letters) {
+    const greens = []
+    for (const g of guesses) {
+        for (let i = 0; i < 5; i++) {
+            if (Number(g.numbers[i]) === GREEN_MATCH) {
+                greens[i] = g.letters[i]
+            }
+        }
+    }
+    return [...letters].map((letter, i) => (greens[i] === letter ? GREEN_MATCH : NO_MATCH)).join("")
+}
+
 function addGuess(letters) {
     letters = letters.trim().toLowerCase()
     const message = validateGuess(letters, "00000")
@@ -22,7 +37,7 @@ function addGuess(letters) {
         return false
     }
     error.textContent = ""
-    guesses.push({ letters, numbers: "00000" })
+    guesses.push({ letters, numbers: startingNumbers(letters) })
     update()
     return true
 }

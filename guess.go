@@ -40,8 +40,8 @@ func cmpWords(counts []entry, first string, second string) bool {
 			return false
 		}
 	}
-	// unreachable
-	return true
+	// same letters (e.g. anagrams like least and slate), fall back to alphabetical
+	return first < second
 }
 
 func guess() {

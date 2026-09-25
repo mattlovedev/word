@@ -28,7 +28,8 @@ func main() {
 		}
 	}
 
-	sort.Slice(counts, func(i int, j int) bool {
+	// stable, so letters with the same count stay in alphabetical order
+	sort.SliceStable(counts, func(i int, j int) bool {
 		return counts[i].count > counts[j].count
 	})
 
